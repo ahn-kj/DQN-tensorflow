@@ -5,7 +5,7 @@ import random
 import logging
 import numpy as np
 
-from utils import save_npy, load_npy
+from .utils import save_npy, load_npy
 
 class ReplayMemory:
   def __init__(self, config, model_dir):
@@ -56,9 +56,9 @@ class ReplayMemory:
     # sample random indexes
     indexes = []
     while len(indexes) < self.batch_size:
-      # find random index 
+      # find random index
       while True:
-        # sample one index (ignore states wraping over 
+        # sample one index (ignore states wraping over
         index = random.randint(self.history_length, self.count - 1)
         # if wraps over current pointer, then get new one
         if index >= self.current and index - self.history_length < self.current:
@@ -69,7 +69,7 @@ class ReplayMemory:
           continue
         # otherwise use this index
         break
-      
+
       # NB! having index first is fastest in C-order matrices
       self.prestates[len(indexes), ...] = self.getState(index - 1)
       self.poststates[len(indexes), ...] = self.getState(index)
@@ -89,10 +89,12 @@ class ReplayMemory:
     for idx, (name, array) in enumerate(
         zip(['actions', 'rewards', 'screens', 'terminals', 'prestates', 'poststates'],
             [self.actions, self.rewards, self.screens, self.terminals, self.prestates, self.poststates])):
+      # np.save(array, os.path.join(self.model_dir, name))
       save_npy(array, os.path.join(self.model_dir, name))
 
   def load(self):
     for idx, (name, array) in enumerate(
         zip(['actions', 'rewards', 'screens', 'terminals', 'prestates', 'poststates'],
             [self.actions, self.rewards, self.screens, self.terminals, self.prestates, self.poststates])):
+        # np.load(os.path.join(self.model_dir, name))
       array = load_npy(os.path.join(self.model_dir, name))
