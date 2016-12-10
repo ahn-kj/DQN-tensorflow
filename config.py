@@ -30,7 +30,7 @@ class AgentConfig(object):
   dueling = False
 
   _test_step = 5 * scale
-  _save_step = _test_step * 10
+  _save_step = _test_step * 1
 
 class EnvironmentConfig(object):
   env_name = 'Breakout-v0'
